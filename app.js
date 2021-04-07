@@ -6,9 +6,19 @@ const app           = express();
 const rateLimit     = require('express-rate-limit');
 const bodyParser    = require('body-parser');
 const mongoose      = require('mongoose');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet        = require('helmet');
 
 
 
+
+
+
+
+
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
 
 /* GET Welcome page. */
 app.get("/", function(req, res) {
