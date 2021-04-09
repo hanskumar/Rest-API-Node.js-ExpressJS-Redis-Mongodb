@@ -1,5 +1,5 @@
 const apiResponse   = require("../helpers/ApiResponse");
-const User          = require("../models/UserModel");
+const UserModel     = require("../models/UserModel");
 const bcrypt        = require('bcrypt');
 
 const {authSchema,profileSchema,RegistrationSchema,ChangePasswordSchema} =  require("../validation/validation_schema");
@@ -17,7 +17,7 @@ exports.authanticate = async (req, res,next) => {
 
             if(grantType == 'email'){
                 //var query = { email : result.email };
-                var NextAction = 'Password';
+                var NextAction = 'PASSWORD';
                 var tokenKey = email;
 
             } else if(grantType == 'phone'){
@@ -27,15 +27,14 @@ exports.authanticate = async (req, res,next) => {
             } else {
                 return apiResponse.validationErrorWithData(res, "Somthing went Wrong,Please try again."); 
             }
+
+            const accessToken = await loginAccessToken(tokenKey);
             
             let Data = {
+                token: accessToken,
                 status : "Pending",
                 nextAction :NextAction,
             };
-
-            const accessToken = await loginAccessToken(tokenKey)
-
-            Data.token = accessToken;
 
             return apiResponse.successResponseWithData(res,"Login Next Action", Data);
     
@@ -57,13 +56,13 @@ exports.login = async (req, res,next) => {
             const { email, password,grantType,phone } = req.body;
             const device_info = req.body.device_info ? req.body.device_info : null;
 
-            const result = await authSchema.validateAsync(req.body);
+            //const result = await authSchema.validateAsync(req.body);
 
             if(grantType == 'email'){
-                var query = { email : result.email };
+                var query = { email : email };
 
             } else if(grantType == 'phone'){
-                var query = { phone : result.phone };
+                var query = { phone : phone };
             }
             
             const user = await User.findOne(query);
@@ -71,7 +70,7 @@ exports.login = async (req, res,next) => {
             //----- If User found then login--------------//
             if (user){
 
-                const isMatch = await user.isPasswordMatch(result.password);
+                const isMatch = await user.isPasswordMatch(password);
 
                 if(!isMatch){
                     return apiResponse.unauthorizedResponse(res, "Employee Code or Password are invalid.");
@@ -111,6 +110,19 @@ exports.login = async (req, res,next) => {
             } else {
                 //----------Register New User------------------//
 
+                let user = new UserModel({
+                    user_id:`TTECH${new_empcode++}`,
+                    password,name,phone,email,
+                    login_by:grantType,
+                });
+
+                const response = await user.save();
+
+                try{
+                    return apiResponse.successResponseWithData(res,"Login successfully.",response);
+                } catch(err){
+                    return apiResponse.ErrorResponse(res, "Something went Wrong,Please Try Again.! ");
+                } 
 
             }
         

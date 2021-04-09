@@ -11,7 +11,7 @@ const AuthController        = require("../controllers/AuthController");
  * ==================  Define All API End Points Here========================
 */
 
-/*-------------First Action----------------------*/
+/*-------------First Action with either Email or Phone----------------------*/
 router.post("/authanticate",AuthController.authanticate);
 
 /*-------------------Login Routes with password or OTP---------------*/

@@ -9,7 +9,7 @@ var UserSchema = new mongoose.Schema({
     password: { type: String,trim: true},
     name: {type: String,trim: true},
     phone: {type: String,unique: true},
-    phone_verified: {type: Boolean, default: false},
+    /* phone_verified: {type: Boolean, default: false}, */
     email: {type: String,unique: true,lowercase: true,
             validate: [validator.isEmail, 'Please provide a valid email'],
             /* validate(value){
@@ -23,19 +23,19 @@ var UserSchema = new mongoose.Schema({
         enum: ['user', 'moderator', 'admin'],
         default: 'user'
     },
-    proifle_image: {type: String,trim: true},
-    about_me: { type: String },
+    proifle_image: {type: String,default: 'default.jpg'},
+    about_me: { type: String,default: '' },
     resignation_date:  { type: Date,default: Date.now},
     login_by:   { type:String,default:''},
     status: { type:String,default:'active'},
 
     locations:[{
-        cityId: { type: String,trim: true},
-        districtId: {type: String,trim: true},
+        cityId: { type: String,default: ''},
+        districtId: {type: String,default: ''},
         lat:{ type: String,default: ''},
         long:{ type: String,default: ''},
-        regionId: { type: String},  
-        subregionId:{ type: String}
+        regionId: { type: String,default: ''},  
+        subregionId:{ type: String,default: ''}
     }],
 
     passwordChangedAt: Date,
