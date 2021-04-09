@@ -112,7 +112,7 @@ exports.login = async (req, res,next) => {
 
                 let user = new UserModel({
                     user_id:`TTECH${new_empcode++}`,
-                    password,name,phone,email,
+                    password,name:'',phone,email,
                     login_by:grantType,
                 });
 
