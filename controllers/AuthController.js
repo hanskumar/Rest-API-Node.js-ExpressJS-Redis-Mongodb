@@ -2,17 +2,71 @@ const apiResponse   = require("../helpers/ApiResponse");
 const User          = require("../models/UserModel");
 const bcrypt        = require('bcrypt');
 
+const {authSchema,profileSchema,RegistrationSchema,ChangePasswordSchema} =  require("../validation/validation_schema");
+
+const { loginAccessToken,signAccessToken,signRefreshToken } = require('../config/JwtToken')
+
+
+exports.authanticate = async (req, res,next) => {
+
+    try {
+            const { email,grantType,phone } = req.body;
+            const device_info = req.body.device_info ? req.body.device_info : null;
+
+            //const result = await authSchema.validateAsync(req.body);
+
+            if(grantType == 'email'){
+                //var query = { email : result.email };
+                var NextAction = 'Password';
+                var tokenKey = email;
+
+            } else if(grantType == 'phone'){
+                //var query = { phone : result.phone };
+                var NextAction = 'PIN';
+                var tokenKey = phone;
+            } else {
+                return apiResponse.validationErrorWithData(res, "Somthing went Wrong,Please try again."); 
+            }
+            
+            let Data = {
+                status : "Pending",
+                nextAction :NextAction,
+            };
+
+            const accessToken = await loginAccessToken(tokenKey)
+
+            Data.token = accessToken;
+
+            return apiResponse.successResponseWithData(res,"Login Next Action", Data);
+    
+
+    } catch (err) {
+
+        console.log(err);
+
+        if(err.isJoi === true){ return apiResponse.validationErrorWithData(res, err.details[0].message); }
+
+        return apiResponse.ErrorResponse(res, err);
+    }
+}
 
 
 exports.login = async (req, res,next) => {
 
     try {
-            const { emp_code, password } = req.body;
+            const { email, password,grantType,phone } = req.body;
             const device_info = req.body.device_info ? req.body.device_info : null;
-            
-            //const result = await authSchema.validateAsync(req.body);
 
-            const user = await User.findOne({emp_code : result.emp_code});
+            const result = await authSchema.validateAsync(req.body);
+
+            if(grantType == 'email'){
+                var query = { email : result.email };
+
+            } else if(grantType == 'phone'){
+                var query = { phone : result.phone };
+            }
+            
+            const user = await User.findOne(query);
             
             //----- If User found then login--------------//
             if (user){
@@ -55,7 +109,9 @@ exports.login = async (req, res,next) => {
                 }
                 
             } else {
-                return apiResponse.unauthorizedResponse(res, "Employee Code or Password wrong.");
+                //----------Register New User------------------//
+
+
             }
         
 
