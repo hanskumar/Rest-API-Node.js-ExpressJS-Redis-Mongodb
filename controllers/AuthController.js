@@ -3,14 +3,15 @@ const UserModel     = require("../models/UserModel");
 const bcrypt        = require('bcrypt');
 var uniqid          = require('uniqid');
 
+
 const {authSchema,profileSchema,RegistrationSchema,ChangePasswordSchema} =  require("../validation/validation_schema");
 
 const { loginAccessToken,signAccessToken,signRefreshToken } = require('../config/JwtToken')
 
 
 exports.authanticate = async (req, res,next) => {
-
     try {
+
             const { email,grantType,phone } = req.body;
             const device_info = req.body.device_info ? req.body.device_info : null;
 
@@ -91,17 +92,11 @@ exports.login = async (req, res,next) => {
                         profile_image :user.profile_image,
                     };
 
-                    const accessToken = await signAccessToken(user.id)
-                    //const refreshToken = await signRefreshToken(user.id)
+                    const accessToken = await signAccessToken(user.id);
+                    const refreshToken = await signRefreshToken(user.id);
 
-                    //Prepare JWT token for authentication
-                    /* const jwtPayload = userData;
-                    const jwtData = {
-                        expiresIn: process.env.JWT_TIMEOUT_DURATION,
-                    };
-                    const secret = process.env.JWT_SECRET; */
-                    //Generated JWT token with Payload and secret.
                     userData.accessToken = accessToken;
+                    userData.refreshToken = refreshToken;
 
                     return apiResponse.successResponseWithData(res,"Login Success.", userData);
 

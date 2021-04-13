@@ -20,7 +20,14 @@ const connection = require('./config/DbConnect')();
 app.use(mongoSanitize());
 
 
-
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this Ip, na wao, please try again after one hour',
+});
+  
+//  apply to all requests
+app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -5,7 +5,7 @@
         .messages({
             'string.empty': `grantType cannot be an empty field`,
         }),
-        email: Joi.string().required()
+        email: Joi.string()
         .messages({
             'string.empty': `email cannot be an empty field`
         }),

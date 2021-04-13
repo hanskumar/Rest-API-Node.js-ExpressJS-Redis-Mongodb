@@ -50,7 +50,7 @@ module.exports = {
           const secret = process.env.JWT_REFRESH_TOKEN_SECRET
           const options = {
             expiresIn: '1y',
-            issuer: 'attendance.com',
+            issuer: 'classified.com',
             audience: userId,
           }
           JWT.sign(payload, secret, options, (err, token) => {
@@ -61,14 +61,17 @@ module.exports = {
               reject (apiResponse.unauthorizedResponse(res, "Unautharized Request Token"));
             }
     
-            client.SET(userId, token, 'EX', 365 * 24 * 60 * 60, (err, reply) => {
+            /* client.SET(userId, token, 'EX', 365 * 24 * 60 * 60, (err, reply) => {
               if (err) {
                 console.log(err.message)
                 //reject(createError.InternalServerError())
                 return
               }
               resolve(token)
-            })
+            }) */
+
+            resolve(token)
+
           })
         })
     },
