@@ -10,7 +10,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet        = require('helmet');
 const apiRouter     = require("./routes/ApiRoutes");
 
-
+/**
+ * DB Connect
+*/
+const connection = require('./config/DbConnect')();
 
 
 //Data sanitization against NoSQL query injection

@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
+var mongoose    = require("mongoose");
 const validator = require('validator');
 
 const bcrypt = require('bcrypt');
@@ -8,15 +8,17 @@ var UserSchema = new mongoose.Schema({
 	user_id: {type: String,unique: true},
     password: { type: String,trim: true},
     name: {type: String,trim: true},
-    phone: {type: String,unique: true},
+    phone: {type: String,trim: true},
     /* phone_verified: {type: Boolean, default: false}, */
-    email: {type: String,unique: true,lowercase: true,
+    
+    /*email: {type: String,unique: true,lowercase: true,
             validate: [validator.isEmail, 'Please provide a valid email'],
-            /* validate(value){
+             validate(value){
                 if(!validator.isEmail(value))
                     throw new Error('It Shoul be an email')
-            } */
-    },
+            } 
+    },*/
+    email: {type: String, trim: true},
     email_verified: {type: Boolean, default: false},
     role: { 
         type: String,

@@ -1,6 +1,7 @@
 const apiResponse   = require("../helpers/ApiResponse");
 const UserModel     = require("../models/UserModel");
 const bcrypt        = require('bcrypt');
+var uniqid          = require('uniqid');
 
 const {authSchema,profileSchema,RegistrationSchema,ChangePasswordSchema} =  require("../validation/validation_schema");
 
@@ -65,7 +66,7 @@ exports.login = async (req, res,next) => {
                 var query = { phone : phone };
             }
             
-            const user = await User.findOne(query);
+            const user = await UserModel.findOne(query);
             
             //----- If User found then login--------------//
             if (user){
@@ -80,6 +81,7 @@ exports.login = async (req, res,next) => {
 
                     let userData = {
                         _id: user._id,
+                        user_id: user.user_id,
                         emp_code:user.emp_code,
                         name: user.name,
                         phone: user.phone,
@@ -111,7 +113,7 @@ exports.login = async (req, res,next) => {
                 //----------Register New User------------------//
 
                 let user = new UserModel({
-                    user_id:`TTECH${new_empcode++}`,
+                    user_id:uniqid(),
                     password,name:'',phone,email,
                     login_by:grantType,
                 });
